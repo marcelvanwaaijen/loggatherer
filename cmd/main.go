@@ -30,7 +30,8 @@ var (
 	showver   bool
 )
 
-//go:generate genver
+//go:generate genver.exe
+
 func init() {
 	var err error
 	ep, _ := execpath.Get()
