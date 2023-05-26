@@ -1,2 +1,2 @@
 release
-./cmd/version.go
+version.go
