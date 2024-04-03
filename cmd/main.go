@@ -28,23 +28,18 @@ var (
 	compress  bool
 	clean     bool
 	showver   bool
+	ep        string
 )
 
 //go:generate genver.exe
 
 func init() {
 	var err error
-	ep, _ := execpath.Get()
+	ep, _ = execpath.Get()
 	cfg, err = ini.Load(fmt.Sprintf("%s.ini", ep))
 	if err != nil {
 		log.Fatalf("[fatal] cannot open ini file: %v", err)
 	}
-
-	logF, err := os.OpenFile(fmt.Sprintf("%s.log", ep), os.O_APPEND|os.O_CREATE|os.O_RDWR, 0777)
-	if err != nil {
-		log.Fatalf("[fatal] cannot open log file: %v", err)
-	}
-	log.SetOutput(logF)
 }
 
 func main() {
@@ -65,6 +60,14 @@ func main() {
 	if showver {
 		ShowVersion()
 	}
+
+	logF, err := os.OpenFile(fmt.Sprintf("%s.log", ep), os.O_APPEND|os.O_CREATE|os.O_RDWR, 0777)
+	if err != nil {
+		log.Fatalf("[fatal] cannot open log file: %v", err)
+	}
+	defer logF.Close()
+
+	log.SetOutput(logF)
 
 	if clean {
 		log.Printf("starting clean-up of logs")
