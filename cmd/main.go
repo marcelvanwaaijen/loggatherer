@@ -39,6 +39,12 @@ func init() {
 	if err != nil {
 		log.Fatalf("[fatal] cannot open ini file: %v", err)
 	}
+
+	logF, err := os.OpenFile(fmt.Sprintf("%s.log", ep), os.O_APPEND|os.O_CREATE|os.O_RDWR, 0777)
+	if err != nil {
+		log.Fatalf("[fatal] cannot open log file: %v", err)
+	}
+	log.SetOutput(logF)
 }
 
 func main() {
@@ -218,7 +224,7 @@ func cleanup() {
 
 	entries, err := os.ReadDir(destination)
 	if err != nil {
-		log.Fatalf("cannot read from folder %q: %v", destination, err)
+		log.Fatalf("[fatal] cannot read from folder %q: %v", destination, err)
 	}
 
 	for _, entry := range entries {
@@ -231,9 +237,9 @@ func cleanup() {
 				}
 
 				if endT.Before(time.Now().UTC().Add(-1 * dur)) {
-					log.Printf("cleaning up %s...", fmt.Sprintf("%s/%s", destination, entry.Name()))
+					log.Printf("[info] cleaning up %s...", fmt.Sprintf("%s/%s", destination, entry.Name()))
 					if err := os.RemoveAll(fmt.Sprintf("%s/%s", destination, entry.Name())); err != nil {
-						log.Printf("cannot delete folder %q: %v", fmt.Sprintf("%s/%s", destination, entry.Name()), err)
+						log.Printf("[error] cannot delete folder %q: %v", fmt.Sprintf("%s/%s", destination, entry.Name()), err)
 					}
 				}
 			}
