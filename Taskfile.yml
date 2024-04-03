@@ -1,0 +1,8 @@
+version: '3'
+
+tasks:
+  generate:
+    - go generate ./...
+  build:
+    - task: generate
+    - go build -o=./release/loggatherer.exe ./cmd
